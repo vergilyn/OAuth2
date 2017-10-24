@@ -1,10 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"/>
 <head>
     <meta charset="UTF-8"/>
     <title>OAuth2.0 Login</title>
+    <script type="text/javascript">
+        window.onload = function () {
+            window.login = function () {
+                var authForm = document.getElementById("oauth_form");
+                authForm.submit();
+            }
+        }
+    </script>
 </head>
 <body>
-login.html
+<div>
+    <form id="oauth_form" name="oauth_form" action="/oauth2/auth_code" method="post">
+        <div>
+            <p class="oauth_main_info">OAuth2.0 Login.html</p>
+            <div>
+                <input type="hidden" name="response_type" th:value="${response_type}"/>
+                <input type="hidden" name="redirect_uri" th:value="${redirect_uri}"/>
+                <input type="hidden" name="client_id" th:value="${client_id}"/>
+                <input type="hidden" name="scope" id="scope" th:value="${scope}"/>
+                <div>
+                    <p>
+                        <label>帐号：</label>
+                        <input type="text" id="username" name="username" value="root"/>
+                    </p>
+                    <p>
+                        <label>密码：</label>
+                        <input type="password" id="password" name="password" value="123456"/>
+                    </p>
+                </div>
+                <div>
+                    <div>
+                        <p>
+                            <a onclick="return login();" node-type="submit"
+                               action-type="submit" href="javascript:void(0)">登陆</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 </body>
 </html>
