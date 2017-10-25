@@ -55,7 +55,7 @@ public class AuthCodeController {
      *   <ul>
      *       <li>client_id、response_type、redirect_uri</li>
      *       <li>username、password</li>
-     *       <li>(可选)scopes: 用户在授权登陆页面选择的授权范围(从此scopes获取相应的resources)</li>
+     *       <li>(可选)scope: client传递client可能需要获取的权限, 在授权页面展示并让用户确认.</li>
      *   </ul>
      * </p>
      * ex.
@@ -105,10 +105,12 @@ public class AuthCodeController {
                 request.setAttribute("client_id", oauthRequest.getClientId());
                 request.setAttribute("redirect_uri", oauthRequest.getRedirectURI());
                 request.setAttribute("state", oauthRequest.getState()); // client请求传递的
-
-//                request.setAttribute("scope", oauthRequest.getScopes());
+                request.setAttribute("scope", oauthRequest.getScopes());
                 return "/oauth2/login";
             }
+
+            //TODO 已登录, 第一次授权
+            //TODO 已登录, 已授权过
 
             /* 4. 生成授权码; (授权码可以有别的算法)
              *  授权码尽可能在短时间有效; 且一个authCode, 只能使用一次得到一个accessToken.
