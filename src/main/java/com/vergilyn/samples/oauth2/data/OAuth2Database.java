@@ -33,8 +33,8 @@ public class OAuth2Database {
     public final static Map<String,UserBean> USER;
     static {
         USER = new HashMap<>();
-        UserBean ua = new UserBean("root", "123456");
-        UserBean ub = new UserBean("tigger", "tigger");
+        UserBean ua = new UserBean("root", "123456", "root_nickname");
+        UserBean ub = new UserBean("tigger", "tigger", "tigger_nickname");
         USER.put(ua.getUsername(), ua);
         USER.put(ub.getUsername(), ub);
     }

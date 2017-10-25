@@ -1,5 +1,6 @@
 package com.vergilyn.samples.oauth2.server.controller;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
+import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -40,23 +42,35 @@ public class AuthCodeController {
     StringRedisTemplate redisTemplate;
 
     /**
-     * <pre>
-     * 获取OAuth2[授权码]请求;
-     * 必须: clientId、redirectURI绝对地址、response_type = code;
+     * 获取OAuth2[授权码];
+     * <p>client请求(GET)参数:
+     *   <ul>
+     *       <li>client_id</li>
+     *       <li>response_type: 固定为"code", 不区分大小写</li>
+     *       <li>redirect_uri: 绝对地址</li>
+     *       <li>(可选)state: 原样返回给client</li>
+     *   </ul>
+     * </p>
+     * <p>用户授权请求(POST)参数:
+     *   <ul>
+     *       <li>client_id、response_type、redirect_uri</li>
+     *       <li>username、password</li>
+     *       <li>(可选)scopes: 用户在授权登陆页面选择的授权范围(从此scopes获取相应的resources)</li>
+     *   </ul>
+     * </p>
      * ex.
-     *  template http://localhost:{port}/oauth2/authorize?client_id={AppKey}&response_type=code&redirect_uri={redirectURI}
-     *  right-test http://localhost:8080/oauth2/authorize?client_id=100001&response_type=code&redirect_uri=http%3A%2F%2Fwww.baidu.com
-     *  error-test http://localhost:8080/oauth2/authorize?client_id=233333&response_type=code&redirect_uri=http%3A%2F%2Fwww.baidu.com
-     * (当然,也可以传递别的参数到redirect_uri)
+     *  <br/>template http://localhost:{port}/oauth2/auth_code?client_id={AppKey}&response_type=code&redirect_uri={redirectURI}
+     *  <br/>right-test http://localhost:8080/oauth2/auth_code?client_id=100001&response_type=code&redirect_uri=http%3A%2F%2Fwww.baidu.com
+     *  <br/>error-test http://localhost:8080/oauth2/auth_code?client_id=233333&response_type=code&redirect_uri=http%3A%2F%2Fwww.baidu.com
      * </pre>
      * @param request
-     * @return 返回授权码(code)有效期xx分钟, 客户端只能使用一次[与client_id和redirect_uri一一对应关系]
+     * @return 返回授权码(code)有效期xx分钟; 请求是的state原样返回.
      * @throws OAuthSystemException
      */
     @RequestMapping(value = "/auth_code", method = {RequestMethod.GET, RequestMethod.POST})
     public String fetchAuthorizeCode(HttpServletRequest request) throws OAuthSystemException {
-
         OAuthAuthzRequest oauthRequest;
+        OAuthResponse response;
         try {
             // 1. 构建OAuth2请求
             oauthRequest = new OAuthAuthzRequest(request);
@@ -70,9 +84,9 @@ public class AuthCodeController {
 
             // 校验失败, 返回错误code、msg到redirectURL。
             if (isCheckFailure) {
-                OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
-                        .setError(OAuthError.CodeResponse.ACCESS_DENIED)
-                        .setErrorDescription("校验失败, 请检查参数是否正确!")
+                response = OAuthASResponse.errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
+                        .setError(OAuthError.CodeResponse.UNAUTHORIZED_CLIENT)
+                        .setErrorDescription(OAuthError.CodeResponse.UNAUTHORIZED_CLIENT)
                         .buildJSONMessage();
                 return "redirect:" + oauthRequest.getRedirectURI();
             }
@@ -90,6 +104,8 @@ public class AuthCodeController {
                 request.setAttribute("response_type", oauthRequest.getResponseType());
                 request.setAttribute("client_id", oauthRequest.getClientId());
                 request.setAttribute("redirect_uri", oauthRequest.getRedirectURI());
+                request.setAttribute("state", oauthRequest.getState()); // client请求传递的
+
 //                request.setAttribute("scope", oauthRequest.getScopes());
                 return "/oauth2/login";
             }
@@ -98,6 +114,8 @@ public class AuthCodeController {
              *  授权码尽可能在短时间有效; 且一个authCode, 只能使用一次得到一个accessToken.
              */
             String username = request.getParameter("username");
+            // 在授权页用户选择的
+            Set<String> scopes = oauthRequest.getScopes();
             String clientId = oauthRequest.getClientId();
             String authCode = "";
             String responseType = oauthRequest.getResponseType();
@@ -106,21 +124,23 @@ public class AuthCodeController {
                 authCode = oauthIssuerImpl.authorizationCode();
                 // (授权码: 加入缓存, 当client请求获取accessToken校验. key: authCode; value: clientId; 失效时长尽可能短)
                 ClientAuthBean authBean = OAuth2Database.CLIENT.get(clientId);
-                AuthCodeCache codeCache = new AuthCodeCache(authBean, authCode, username);
-                redisTemplate.opsForValue().set(CacheConstant.keyAuthCode(clientId, authCode), JSON.toJSONString(codeCache), 10, TimeUnit.MINUTES);
+                AuthCodeCache codeCache = new AuthCodeCache(authBean, authCode, username, scopes, oauthRequest.getState());
+                redisTemplate.opsForValue().set(CacheConstant.keyAuthCode(clientId, authCode), JSON.toJSONString(codeCache), CacheConstant.EXPIRED_AUTH_CODE, TimeUnit.MINUTES);
             }
 
             // 4.1 构建授权响应
-            OAuthResponse oauthResponse = OAuthASResponse.authorizationResponse(request, HttpServletResponse.SC_FOUND)
+            response = OAuthASResponse.authorizationResponse(request, HttpServletResponse.SC_FOUND)
                     .setCode(authCode)
+                    .setParam(OAuth.OAUTH_STATE,oauthRequest.getState())
+                    .setExpiresIn(Long.valueOf(CacheConstant.EXPIRED_AUTH_CODE))
                     .location(oauthRequest.getRedirectURI())
                     .buildQueryMessage();
 
             // 申请[授权码成功], 重定向到: redirectURL
-            return "redirect:" + oauthResponse.getLocationUri();
-        } catch (OAuthProblemException e) {
-            OAuthResponse oauthResponse = OAuthResponse.errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
-                    .error(e) // OAuthProblemException ex
+            return "redirect:" + response.getLocationUri();
+        } catch (OAuthProblemException ex) {
+            response= OAuthResponse.errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
+                    .error(ex)
                     .buildJSONMessage();
             return "/oauth2/error";
         }

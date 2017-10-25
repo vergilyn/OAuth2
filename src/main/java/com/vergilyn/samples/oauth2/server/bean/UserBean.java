@@ -13,9 +13,10 @@ public class UserBean {
     private String password;
     private String nickname;
 
-    public UserBean(String username, String password) {
+    public UserBean(String username, String password, String nickname) {
         this.username = username;
         this.password = password;
+        this.nickname = nickname;
     }
 
     public String getUsername() {

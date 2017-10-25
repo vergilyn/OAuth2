@@ -12,6 +12,7 @@ public class ClientAuthBean {
     private String clientId;
     private String clientName;
     private String clientSecret;
+//  private String secretSalt; // 加密盐, 正式环境需要考虑
 
     public ClientAuthBean() {
     }

@@ -6,6 +6,7 @@ package com.vergilyn.samples.oauth2.server.constant;
  * @date 2017/10/24
  */
 public class CacheConstant {
+
     /**
      * type: string-json</br>
      * key: auth_code_{client_id}:{auth_code}</br>
@@ -15,6 +16,8 @@ public class CacheConstant {
      * (因为为了验证匹配, 所以json中才保存了client_id、client_secret)</br>
      */
     public final static String REDIS_AUTH_CODE = "auth_code_%s:%s";
+    public final static int EXPIRED_AUTH_CODE = 10;
+
     /**
      * type: string-json</br>
      * key: access_token_{client_id}:{access_token}</br>
@@ -25,6 +28,7 @@ public class CacheConstant {
      *   1. 无法从redis-key看出是哪个用户(client请求refreshToken不可能传username, 一般只传refreshCode、clientId、grantType)</br>
      */
     public final static String REDIS_ACCESS_TOKEN = "access_token_%s:%s";
+    public final static int EXPIRED_ACCESS_TOKEN = 7;
     /**
      * type: string</br>
      * key: refresh_token_{client_id}:{refresh_token}</br>
@@ -37,6 +41,8 @@ public class CacheConstant {
      *   1. 无法从redis-key看出是哪个用户(client请求refreshToken不可能传username, 一般只传refreshCode、clientId、grantType)</br>
      */
     public final static String REDIS_REFRESH_TOKEN = "refresh_token_%s:%s";
+    public final static int EXPIRED_REFRESH_TOKEN = 30;
+
 
 
     public static String keyAuthCode(String clientId, String authCode){
