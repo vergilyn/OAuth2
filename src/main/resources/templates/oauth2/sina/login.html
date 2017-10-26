@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <!--/*@thymesVar id="appName" type="java.lang.String"*/-->
+    <title th:text="${appName}"></title>
+
+</head>
+<body>
+<!--/*@thymesVar id="desc" type="java.lang.String"*/-->
+<p th:text="${desc}"></p>
+<!--/*@thymesVar id="sinaURL" type="java.lang.String"*/-->
+<a th:href="${sinaURL}">
+    跳转到sina-weibo登陆
+</a>
+</body>
+</html>

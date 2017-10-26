@@ -59,13 +59,13 @@
         </dependency>
         <!-- /OAuth2.0 server -->
 
-        <!-- OAuth2.0 client -->
+        <!-- OAuth2.0 sina -->
         <dependency>
             <groupId>org.apache.oltu.oauth2</groupId>
             <artifactId>org.apache.oltu.oauth2.client</artifactId>
             <version>${oauth2.version}</version>
         </dependency>
-        <!-- /OAuth2.0 client -->
+        <!-- /OAuth2.0 sina -->
 
         <!-- OAuth2.0 common -->
         <dependency>

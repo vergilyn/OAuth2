@@ -106,7 +106,7 @@ public class AuthCodeController {
                 request.setAttribute("redirect_uri", oauthRequest.getRedirectURI());
                 request.setAttribute("state", oauthRequest.getState()); // client请求传递的
                 request.setAttribute("scope", oauthRequest.getScopes());
-                return "/oauth2/login";
+                return "/oauth2/server/login";
             }
 
             //TODO 已登录, 第一次授权
@@ -144,7 +144,7 @@ public class AuthCodeController {
             response= OAuthResponse.errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
                     .error(ex)
                     .buildJSONMessage();
-            return "/oauth2/error";
+            return "/oauth2/server/error";
         }
     }
 

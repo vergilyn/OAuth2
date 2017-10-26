@@ -94,7 +94,7 @@ public class AuthTokenController {
             if(!isSecret){
                 response = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                                 .setError(OAuthError.TokenResponse.INVALID_CLIENT)
-                                .setErrorDescription("validate client error.")
+                                .setErrorDescription("validate sina error.")
                                 .buildJSONMessage();
                 return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
 
@@ -126,7 +126,7 @@ public class AuthTokenController {
                     response = OAuthASResponse
                             .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                             .setError(OAuthError.TokenResponse.INVALID_CLIENT)
-                            .setErrorDescription("client does not match .")
+                            .setErrorDescription("sina does not match .")
                             .buildJSONMessage();
                     return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
                 }

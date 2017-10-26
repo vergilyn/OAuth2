@@ -21,8 +21,9 @@
 
 ## 3. 代码结构
 ### 3.1 服务器划分
-  1. server服务端, port:8080
-  2. client客户端, port:8081
+  1. server服务端, port:8081
+  2. client客户端, port:8082
+  3. sina客户端, port:8080 (说明: 对接sina微博登陆)
 ### 3.2 授权登陆逻辑
 建议先看QQ的文档: [获取Access_Token](http://wiki.connect.qq.com/%E4%BD%BF%E7%94%A8authorization_code%E8%8E%B7%E5%8F%96access_token)  
   1. client发起授权登陆请求(GET):  
