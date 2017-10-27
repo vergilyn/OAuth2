@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 /**
+ * 具体参考sina接口文档: http://open.weibo.com/wiki/%E6%8E%88%E6%9D%83%E6%9C%BA%E5%88%B6
  * @author VergiLyn
  * @blog http://www.cnblogs.com/VergiLyn/
  * @date 2017/10/26
@@ -17,27 +18,21 @@ import org.springframework.stereotype.Component;
 public class SinaOAuthConfig {
     private String appKey;
     private String appSecret;
+
     private String redirectURI;
+    // 客户端提供: 取消授权回调页
     private String cancleURI;
 
-    /**
-     * client_id	true	string	申请应用时分配的AppKey。
-     * redirect_uri	true	string	授权回调地址，站外应用需与设置的回调地址一致，站内应用需填写canvas page的地址。
-     */
+    // 请求用户授权Token
     private String codeURL;
-    /**
-     *                  必选      类型    说明
-     * client_id	    true	string	申请应用时分配的AppKey。
-     * client_secret	true	string	申请应用时分配的AppSecret。
-     * grant_type	    true	string	请求的类型，填写"authorization_code"
-     *
-     * grant_type为authorization_code时
-     * code	            true	string	调用authorize获得的code值。
-     * redirect_uri	    true	string	回调地址，需需与注册应用里的回调地址一致。
-     */
+    // 获取授权过的Access Token
     private String tokenURL;
-
+    // 用access_token、uid获取用户授权信息
     private String infoURL;
+    // 授权回收接口
+    private String revokeURL;
+    // 授权信息查询接口
+    private String tokenInfoURL;
 
     public String getAppKey() {
         return appKey;
@@ -93,6 +88,22 @@ public class SinaOAuthConfig {
 
     public void setInfoURL(String infoURL) {
         this.infoURL = infoURL;
+    }
+
+    public String getRevokeURL() {
+        return revokeURL;
+    }
+
+    public void setRevokeURL(String revokeURL) {
+        this.revokeURL = revokeURL;
+    }
+
+    public String getTokenInfoURL() {
+        return tokenInfoURL;
+    }
+
+    public void setTokenInfoURL(String tokenInfoURL) {
+        this.tokenInfoURL = tokenInfoURL;
     }
 
     public String toSinaURL(){

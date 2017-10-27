@@ -6,14 +6,18 @@
 
 </head>
 <body>
-<p>https://api.weibo.com/oauth2/access_token responseBady: </p>
+<p>https://api.weibo.com/oauth2/access_token, responseBady: </p>
 <!--/*@thymesVar id="respBody" type="java.lang.String"*/-->
 <p th:text="${respBody}">empty bady.</p>
 
 <!--/*@thymesVar id="infoURL" type="java.lang.String"*/-->
-<p th:if="${infoURL}">
-    <a th:href="${infoURL}">根据access_token获取sina用户信息.</a>
-</p>
+<!--/*@thymesVar id="revokeURL" type="java.lang.String"*/-->
+<!--/*@thymesVar id="tokenInfoURL" type="java.lang.String"*/-->
+<div th:if="${infoURL}">
+    <p><a th:href="${infoURL}">根据access_token获取sina用户信息.</a></p>
+    <p><a th:href="${revokeURL}">授权回收接口</a></p>
+    <p><a th:href="${tokenInfoURL}">授权信息查询接口</a></p>
+</div>
 
 </body>
 </html>
