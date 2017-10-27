@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>error</title>
+
+</head>
+<body>
+<p>https://api.weibo.com/oauth2/authorize error: </p>
+<!--/*@thymesVar id="resp" type="java.lang.String"*/-->
+<p th:text="${resp}">empty error msg.</p>
+
+</body>
+</html>

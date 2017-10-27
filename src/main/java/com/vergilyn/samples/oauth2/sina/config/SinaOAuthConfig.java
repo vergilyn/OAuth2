@@ -19,6 +19,7 @@ public class SinaOAuthConfig {
     private String appSecret;
     private String redirectURI;
     private String cancleURI;
+
     /**
      * client_id	true	string	申请应用时分配的AppKey。
      * redirect_uri	true	string	授权回调地址，站外应用需与设置的回调地址一致，站内应用需填写canvas page的地址。
@@ -35,6 +36,8 @@ public class SinaOAuthConfig {
      * redirect_uri	    true	string	回调地址，需需与注册应用里的回调地址一致。
      */
     private String tokenURL;
+
+    private String infoURL;
 
     public String getAppKey() {
         return appKey;
@@ -84,6 +87,14 @@ public class SinaOAuthConfig {
         this.tokenURL = tokenURL;
     }
 
+    public String getInfoURL() {
+        return infoURL;
+    }
+
+    public void setInfoURL(String infoURL) {
+        this.infoURL = infoURL;
+    }
+
     public String toSinaURL(){
         String url = this.codeURL;
         url += "?client_id=" + this.appKey;
@@ -92,4 +103,11 @@ public class SinaOAuthConfig {
         return url;
     }
 
+    public String toInfoURL(String accessToken, String uid){
+        String url = this.infoURL;
+        url += "?access_token=" + accessToken;
+        url += "&uid=" + uid;
+
+        return url;
+    }
 }

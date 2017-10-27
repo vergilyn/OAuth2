@@ -13,7 +13,7 @@ public class SinaClientApplication {
 
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(SinaClientApplication.class);
-        application.setAdditionalProfiles("sina");
+        application.setAdditionalProfiles("sina","redis");
         application.run(args);
     }
 

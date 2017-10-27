@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>access_token responseBady</title>
+
+</head>
+<body>
+<p>https://api.weibo.com/oauth2/access_token responseBady: </p>
+<!--/*@thymesVar id="respBody" type="java.lang.String"*/-->
+<p th:text="${respBody}">empty bady.</p>
+
+<!--/*@thymesVar id="infoURL" type="java.lang.String"*/-->
+<p th:if="${infoURL}">
+    <a th:href="${infoURL}">根据access_token获取sina用户信息.</a>
+</p>
+
+</body>
+</html>
