@@ -39,6 +39,12 @@ public class SinaClientController {
     @Autowired
     StringRedisTemplate redisTemplate;
 
+    /**
+     * 应用服务的登陆页面, 放置sina的第三方登陆。
+     * @param request
+     * @return
+     * @throws OAuthSystemException
+     */
     @RequestMapping(value = "/login")
     public String login(HttpServletRequest request) throws OAuthSystemException {
         request.setAttribute("appName", appName);
